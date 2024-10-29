@@ -1,5 +1,6 @@
 package com.br.vlbc.model;
 
+import com.br.vlbc.records.CategoriaDTO;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -25,4 +26,9 @@ public class Categoria {
 
     @OneToMany(mappedBy = "categoria", fetch = FetchType.LAZY)
     private List<Transactions> transactions;
+
+    public Categoria(CategoriaDTO data) {
+        this.name = data.name();
+        this.type = data.type();
+    }
 }
