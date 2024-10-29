@@ -1,5 +1,6 @@
 package com.br.vlbc.model;
 
+import com.br.vlbc.enums.Type;
 import com.br.vlbc.records.CategoriaDTO;
 import jakarta.persistence.*;
 import lombok.*;
@@ -15,14 +16,14 @@ import java.util.List;
 @EqualsAndHashCode(of = "id")
 public class Categoria {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "name", nullable = false)
     private String name;
 
     @Column(name = "type", nullable = false)
-    private String type;
+    private Type type;
 
     @OneToMany(mappedBy = "categoria", fetch = FetchType.LAZY)
     private List<Transactions> transactions;
