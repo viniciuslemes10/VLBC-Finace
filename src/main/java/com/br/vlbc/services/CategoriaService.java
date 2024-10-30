@@ -1,6 +1,7 @@
 package com.br.vlbc.services;
 
 import com.br.vlbc.enums.Type;
+import com.br.vlbc.exceptions.CategoriaNotFoundException;
 import com.br.vlbc.model.Categoria;
 import com.br.vlbc.records.CategoriaDTO;
 import com.br.vlbc.records.CategoriaDetalhamentoDTO;
@@ -23,13 +24,13 @@ public class CategoriaService {
         if(categoriaFound.isEmpty()) {
             return repository.save(categoria);
         }
-        throw new IllegalArgumentException("Categoria não encontrada!");
+        throw new CategoriaNotFoundException("Categoria não encontrada!");
     }
 
     public Categoria findById(Long id) {
         return repository.findById(id)
                 .orElseThrow(
-                        () -> new IllegalArgumentException("Categoria não encontrada!")
+                        () -> new CategoriaNotFoundException("Categoria não encontrada!")
                 );
     }
 
