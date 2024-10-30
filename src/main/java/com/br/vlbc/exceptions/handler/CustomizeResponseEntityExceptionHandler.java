@@ -1,5 +1,6 @@
 package com.br.vlbc.exceptions.handler;
 
+import com.br.vlbc.exceptions.CategoriaNotFoundException;
 import com.br.vlbc.exceptions.ExceptionResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,4 +21,13 @@ public class CustomizeResponseEntityExceptionHandler extends ResponseEntityExcep
         return new ResponseEntity<>(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    @ExceptionHandler(CategoriaNotFoundException.class)
+    public ResponseEntity<ExceptionResponse> handlerCategoriaNotFoundException(Exception ex, WebRequest req) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse(
+                new Date(),
+                ex.getMessage(),
+                req.getDescription(false)
+        );
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
+    }
 }
