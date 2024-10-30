@@ -10,7 +10,6 @@ import com.br.vlbc.repositories.CategoriaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.EnumSet;
 import java.util.List;
 
 @Service
