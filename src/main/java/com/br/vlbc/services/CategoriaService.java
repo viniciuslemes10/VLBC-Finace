@@ -1,6 +1,7 @@
 package com.br.vlbc.services;
 
 import com.br.vlbc.enums.Type;
+import com.br.vlbc.exceptions.CategoriaExistException;
 import com.br.vlbc.exceptions.CategoriaNotFoundException;
 import com.br.vlbc.model.Categoria;
 import com.br.vlbc.records.CategoriaDTO;
@@ -11,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.EnumSet;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class CategoriaService {
@@ -24,7 +24,7 @@ public class CategoriaService {
         if(categoriaFound.isEmpty()) {
             return repository.save(categoria);
         }
-        throw new CategoriaNotFoundException("Categoria não encontrada!");
+        throw new CategoriaExistException("Categoria já registrada!");
     }
 
     public Categoria findById(Long id) {
@@ -43,13 +43,20 @@ public class CategoriaService {
 
     public Categoria update(CategoriaDTO data, Long id) {
         var categoria = findById(id);
-        if(data.name() != null && !data.name().isEmpty()) {
+
+        if (data.name() != null && !data.name().isEmpty()) {
             categoria.setName(data.name());
         }
 
-        if(data.type() != null && EnumSet.allOf(Type.class).contains(data.type())) {
-            categoria.setType(data.type());
+        if (data.type() != null && !data.type().isEmpty()) {
+            try {
+                Type tipo = Type.valueOf(data.type());
+                categoria.setType(tipo);
+            } catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException("Tipo inválido: " + data.type());
+            }
         }
+
         return repository.save(categoria);
     }
 

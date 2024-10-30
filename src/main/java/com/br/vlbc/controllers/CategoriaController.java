@@ -26,7 +26,7 @@ public class CategoriaController {
 
     @GetMapping(value = "/{id}",
                 produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CategoriaDetalhamentoDTO> findById(@PathVariable Long id) {
+    public ResponseEntity<CategoriaDetalhamentoDTO> findById(@PathVariable("id") Long id) {
         var categoria = service.findById(id);
         return ResponseEntity.ok(new CategoriaDetalhamentoDTO(categoria));
     }
@@ -37,7 +37,7 @@ public class CategoriaController {
     }
 
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<?> delete(@PathVariable Long id) {
+    public ResponseEntity<?> delete(@PathVariable("id") Long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
@@ -46,7 +46,7 @@ public class CategoriaController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CategoriaDetalhamentoDTO> update(
             @RequestBody CategoriaDTO data,
-            @PathVariable Long id) {
+            @PathVariable("id") Long id) {
         var categoria= service.update(data, id);
         return ResponseEntity.ok(new CategoriaDetalhamentoDTO(categoria));
     }

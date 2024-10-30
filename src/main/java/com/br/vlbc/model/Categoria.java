@@ -23,6 +23,7 @@ public class Categoria {
     private String name;
 
     @Column(name = "type", nullable = false)
+    @Enumerated(EnumType.STRING)
     private Type type;
 
     @OneToMany(mappedBy = "categoria", fetch = FetchType.LAZY)
@@ -30,6 +31,6 @@ public class Categoria {
 
     public Categoria(CategoriaDTO data) {
         this.name = data.name();
-        this.type = data.type();
+        this.type = Type.valueOf(data.type());
     }
 }
