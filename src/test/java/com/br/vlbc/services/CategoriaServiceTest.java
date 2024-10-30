@@ -2,6 +2,7 @@ package com.br.vlbc.services;
 
 import com.br.vlbc.enums.Type;
 import com.br.vlbc.exceptions.CategoriaExistException;
+import com.br.vlbc.exceptions.CategoriaNotFoundException;
 import com.br.vlbc.model.Categoria;
 import com.br.vlbc.records.CategoriaDTO;
 import com.br.vlbc.repositories.CategoriaRepository;
@@ -65,9 +66,49 @@ class CategoriaServiceTest {
                         service.create(data);
         });
 
-       assertEquals("Categoria já registrada!", categoriaExistException.getMessage());
+        assertEquals("Categoria já registrada!", categoriaExistException.getMessage());
         verify(repository).findByName(categoria.getName());
         verify(repository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("Sucesso ao buscar uma Categoria por ID")
+    @Order(3)
+    void testFindByIdSuccess() {
+        Long id = 1L;
+
+        CategoriaDTO data = new CategoriaDTO("Transporte", "EXPENSES");
+        var categoria = new Categoria(data);
+
+        when(repository.findById(id)).thenReturn(Optional.of(categoria));
+
+        var result = service.findById(id);
+
+        assertNotNull(result);
+        assertNotNull(result.getName());
+        assertNotNull(result.getType());
+
+        assertEquals(categoria.getName(), result.getName());
+        assertEquals(categoria.getType(), result.getType());
+
+        verify(repository).findById(id);
+    }
+
+    @Test
+    @DisplayName("Falha ao buscar Categoria não existente")
+    @Order(4)
+    void testFindByIdCategoriaNotFoundException() {
+        Long id = 2L;
+
+        when(repository.findById(id)).thenReturn(Optional.empty());
+
+        CategoriaNotFoundException exception = assertThrows(CategoriaNotFoundException.class, () -> {
+            service.findById(id);
+        });
+
+        assertEquals("Categoria não encontrada!", exception.getMessage());
+
+        verify(repository).findById(id);
     }
 
     private Categoria mockCategoria(CategoriaDTO data) {
