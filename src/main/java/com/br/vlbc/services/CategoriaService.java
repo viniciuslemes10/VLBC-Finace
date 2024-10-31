@@ -3,6 +3,7 @@ package com.br.vlbc.services;
 import com.br.vlbc.enums.Type;
 import com.br.vlbc.exceptions.CategoriaExistException;
 import com.br.vlbc.exceptions.CategoriaNotFoundException;
+import com.br.vlbc.exceptions.InvalidTypeArgumentException;
 import com.br.vlbc.model.Categoria;
 import com.br.vlbc.records.CategoriaDTO;
 import com.br.vlbc.records.CategoriaDetalhamentoDTO;
@@ -52,7 +53,7 @@ public class CategoriaService {
                 Type tipo = Type.valueOf(data.type());
                 categoria.setType(tipo);
             } catch (IllegalArgumentException e) {
-                throw new IllegalArgumentException("Tipo inválido: " + data.type());
+                throw new InvalidTypeArgumentException("Tipo inválido: " + data.type());
             }
         }
 
