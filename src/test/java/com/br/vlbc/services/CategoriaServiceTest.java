@@ -37,7 +37,6 @@ class CategoriaServiceTest {
 
     @Test
     @DisplayName("Successo ao criar uma Categoria")
-    @Order(1)
     void testCreateSuccess() {
         CategoriaDTO data = new CategoriaDTO("Transporte", "EXPENSES");
         var categoria = new Categoria(data);
@@ -57,7 +56,6 @@ class CategoriaServiceTest {
 
     @Test
     @DisplayName("Falha ao criar uma Categoria já existente")
-    @Order(2)
     void testCreateWhenCategoriaExists() {
         CategoriaDTO data = new CategoriaDTO("Transporte", "EXPENSES");
         var categoria = new Categoria(data);
@@ -76,7 +74,6 @@ class CategoriaServiceTest {
 
     @Test
     @DisplayName("Sucesso ao buscar uma Categoria por ID")
-    @Order(3)
     void testFindByIdSuccess() {
         Long id = 1L;
 
@@ -99,7 +96,6 @@ class CategoriaServiceTest {
 
     @Test
     @DisplayName("Falha ao buscar Categoria não existente")
-    @Order(4)
     void testFindByIdCategoriaNotFoundException() {
         Long id = 2L;
 
@@ -116,7 +112,6 @@ class CategoriaServiceTest {
 
     @Test
     @DisplayName("Successo ao atualizar uma Categoria")
-    @Order(5)
     void testUpdateSuccess() {
         CategoriaDTO dataUpdate = new CategoriaDTO("Alimentação", "REVENUE");
 
@@ -138,7 +133,6 @@ class CategoriaServiceTest {
 
     @Test
     @DisplayName("Falha ao atualizar uma Categoria")
-    @Order(6)
     void testUpdateCategoriaNotFoundException() {
         CategoriaDTO dataUpdate = new CategoriaDTO("Transporte", "INVESTMENT");
         Long id = 2L;
@@ -156,7 +150,6 @@ class CategoriaServiceTest {
 
     @Test
     @DisplayName("CategoriaDTO com dados Vazios")
-    @Order(7)
     void testUpdateCategoriaWithEmptyData() {
         CategoriaDTO data = new CategoriaDTO("Transporte", "INVESTMENT");
         CategoriaDTO dataUpdate = new CategoriaDTO("", "");
@@ -179,7 +172,6 @@ class CategoriaServiceTest {
 
     @Test
     @DisplayName("Falha ao atualizar uma Categoria Type inválido")
-    @Order(8)
     void testUpdateCategoriaInvalidType() {
         CategoriaDTO data = new CategoriaDTO("Transporte", "INVESTMENT");
         CategoriaDTO dataUpdate = new CategoriaDTO("Alimentação", "INVALID");
@@ -200,7 +192,6 @@ class CategoriaServiceTest {
 
     @Test
     @DisplayName("Sucesso ao deletar uma Categoria")
-    @Order(9)
     void testDeleteCategoria() {
         CategoriaDTO data = new CategoriaDTO("Transporte", "INVESTMENT");
         Long id = 1L;
@@ -217,7 +208,6 @@ class CategoriaServiceTest {
 
     @Test
     @DisplayName("Falha ao deletar uma Categoria não existente")
-    @Order(10)
     void testDeleteCategoriaNotFoundException() {
         Long id = 2L;
 
@@ -234,7 +224,6 @@ class CategoriaServiceTest {
 
     @Test
     @DisplayName("Sucesso ao buscar todas as Categorias")
-    @Order(11)
     void testFindAllCategorias() {
         CategoriaDTO data = new CategoriaDTO("Transporte", "INVESTMENT");
         CategoriaDTO dataTwo = new CategoriaDTO("Alimentação", "EXPENSES");
