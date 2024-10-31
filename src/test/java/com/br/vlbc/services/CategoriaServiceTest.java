@@ -36,8 +36,8 @@ class CategoriaServiceTest {
     }
 
     @Test
-    @DisplayName("Successo ao criar uma Categoria")
-    void testCreateSuccess() {
+    @DisplayName("Deve ter sucesso ao criar uma Categoria com informações válidas")
+    void testCreatedSuccess() {
         CategoriaDTO data = new CategoriaDTO("Transporte", "EXPENSES");
         var categoria = new Categoria(data);
 
@@ -55,8 +55,8 @@ class CategoriaServiceTest {
     }
 
     @Test
-    @DisplayName("Falha ao criar uma Categoria já existente")
-    void testCreateWhenCategoriaExists() {
+    @DisplayName("Deve lançar uma exceção ao tentar criar uma Categoria que já está registrada")
+    void testShouldFailToCreateCategoryIfAlreadyExists() {
         CategoriaDTO data = new CategoriaDTO("Transporte", "EXPENSES");
         var categoria = new Categoria(data);
 
@@ -73,8 +73,8 @@ class CategoriaServiceTest {
     }
 
     @Test
-    @DisplayName("Sucesso ao buscar uma Categoria por ID")
-    void testFindByIdSuccess() {
+    @DisplayName("Deve retornar a Categoria quando buscada pelo ID")
+    void testFindCategoryByIdSuccess() {
         Long id = 1L;
 
         CategoriaDTO data = new CategoriaDTO("Transporte", "EXPENSES");
@@ -95,8 +95,8 @@ class CategoriaServiceTest {
     }
 
     @Test
-    @DisplayName("Falha ao buscar Categoria não existente")
-    void testFindByIdCategoriaNotFoundException() {
+    @DisplayName("Lança CategoriaNotFoundException ao tentar buscar uma Categoria que não existe")
+    void testFindCategoryByIdNotFoundException() {
         Long id = 2L;
 
         when(repository.findById(id)).thenReturn(Optional.empty());
@@ -105,14 +105,15 @@ class CategoriaServiceTest {
             service.findById(id);
         });
 
-        assertEquals("Categoria não encontrada!", exception.getMessage());
+        assertEquals("Categoria não encontrada!", exception.getMessage(),
+                "A mensagem de erro deve indicar que a Categoria não foi encontrada.");
 
         verify(repository).findById(id);
     }
 
     @Test
     @DisplayName("Successo ao atualizar uma Categoria")
-    void testUpdateSuccess() {
+    void testSuccessfulCategoryUpdate() {
         CategoriaDTO dataUpdate = new CategoriaDTO("Alimentação", "REVENUE");
 
         var categoria = new Categoria(dataUpdate);
@@ -132,8 +133,8 @@ class CategoriaServiceTest {
     }
 
     @Test
-    @DisplayName("Falha ao atualizar uma Categoria")
-    void testUpdateCategoriaNotFoundException() {
+    @DisplayName("Deve lançar exceção ao tentar atualizar uma Categoria não encontrada")
+    void testUpdateThrowsCategoriaNotFoundException() {
         CategoriaDTO dataUpdate = new CategoriaDTO("Transporte", "INVESTMENT");
         Long id = 2L;
 
@@ -143,14 +144,15 @@ class CategoriaServiceTest {
             service.update(dataUpdate, id);
         });
 
-        assertEquals("Categoria não encontrada!", exception.getMessage());
+        assertEquals("Categoria não encontrada!", exception.getMessage(),
+                "A mensagem de erro deve indicar que a Categoria não foi encontrada.");
 
         verify(repository).findById(id);
     }
 
     @Test
-    @DisplayName("CategoriaDTO com dados Vazios")
-    void testUpdateCategoriaWithEmptyData() {
+    @DisplayName("Deve manter dados existentes ao atualizar CategoriaDTO com dados vazios")
+    void testUpdatePreservesDataWithEmptyCategoriaDTO() {
         CategoriaDTO data = new CategoriaDTO("Transporte", "INVESTMENT");
         CategoriaDTO dataUpdate = new CategoriaDTO("", "");
         Long id = 1L;
@@ -171,8 +173,8 @@ class CategoriaServiceTest {
     }
 
     @Test
-    @DisplayName("Falha ao atualizar uma Categoria Type inválido")
-    void testUpdateCategoriaInvalidType() {
+    @DisplayName("Atualização de Categoria deve falhar com tipo inválido")
+    void testUpdateThrowsExceptionForInvalidTypeArgumentException() {
         CategoriaDTO data = new CategoriaDTO("Transporte", "INVESTMENT");
         CategoriaDTO dataUpdate = new CategoriaDTO("Alimentação", "INVALID");
         Long id = 1L;
@@ -185,14 +187,15 @@ class CategoriaServiceTest {
             service.update(dataUpdate, id);
         });
 
-        assertEquals("Tipo inválido: " + dataUpdate.type(), exception.getMessage());
+        assertEquals("Tipo inválido: " + dataUpdate.type(), exception.getMessage(),
+                "A mensagem de erro deve indicar que o dado referente a Type está inválido.");
 
         verify(repository).findById(id);
     }
 
     @Test
     @DisplayName("Sucesso ao deletar uma Categoria")
-    void testDeleteCategoria() {
+    void testDeleteCategorySuccessfully() {
         CategoriaDTO data = new CategoriaDTO("Transporte", "INVESTMENT");
         Long id = 1L;
 
@@ -207,8 +210,8 @@ class CategoriaServiceTest {
     }
 
     @Test
-    @DisplayName("Falha ao deletar uma Categoria não existente")
-    void testDeleteCategoriaNotFoundException() {
+    @DisplayName("Falha esperada ao tentar remover uma Categoria que não existe")
+    void testDeleteNonExistentCategoriaThrowsException() {
         Long id = 2L;
 
         when(repository.findById(id)).thenReturn(Optional.empty());
@@ -217,14 +220,15 @@ class CategoriaServiceTest {
             service.delete(id);
         });
 
-        assertEquals("Categoria não encontrada!", exception.getMessage());
+        assertEquals("Categoria não encontrada!", exception.getMessage(),
+                "A mensagem de erro deve indicar que a Categoria não foi encontrada.");
 
         verify(repository).findById(id);
     }
 
     @Test
-    @DisplayName("Sucesso ao buscar todas as Categorias")
-    void testFindAllCategorias() {
+    @DisplayName("Deve retornar todas as Categorias com sucesso")
+    void testFetchAllCategoriasReturnsSuccess() {
         CategoriaDTO data = new CategoriaDTO("Transporte", "INVESTMENT");
         CategoriaDTO dataTwo = new CategoriaDTO("Alimentação", "EXPENSES");
 
