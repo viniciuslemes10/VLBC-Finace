@@ -6,11 +6,9 @@ import com.br.vlbc.exceptions.CategoriaNotFoundException;
 import com.br.vlbc.exceptions.InvalidTypeArgumentException;
 import com.br.vlbc.model.Categoria;
 import com.br.vlbc.records.CategoriaDTO;
-import com.br.vlbc.records.CategoriaDetalhamentoDTO;
 import com.br.vlbc.repositories.CategoriaRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -62,8 +60,7 @@ class CategoriaServiceTest {
 
         when(repository.findByName(categoria.getName())).thenReturn(Optional.of(categoria));
 
-        CategoriaExistException categoriaExistException = assertThrows(CategoriaExistException.class,
-                () -> {
+        CategoriaExistException categoriaExistException = assertThrows(CategoriaExistException.class, () -> {
                         service.create(data);
         });
 
