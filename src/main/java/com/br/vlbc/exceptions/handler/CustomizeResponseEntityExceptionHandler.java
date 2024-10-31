@@ -3,6 +3,7 @@ package com.br.vlbc.exceptions.handler;
 import com.br.vlbc.exceptions.CategoriaExistException;
 import com.br.vlbc.exceptions.CategoriaNotFoundException;
 import com.br.vlbc.exceptions.ExceptionResponse;
+import com.br.vlbc.exceptions.InvalidTypeArgumentException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -38,6 +39,16 @@ public class CustomizeResponseEntityExceptionHandler extends ResponseEntityExcep
 
     @ExceptionHandler(CategoriaExistException.class)
     public final ResponseEntity<ExceptionResponse> handlerCategoriaExistException(Exception ex, WebRequest req) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse(
+                new Date(),
+                ex.getMessage(),
+                req.getDescription(false)
+        );
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(InvalidTypeArgumentException.class)
+    public final ResponseEntity<ExceptionResponse> handlerInvalidTypeArgumentException(Exception ex, WebRequest req) {
         ExceptionResponse exceptionResponse = new ExceptionResponse(
                 new Date(),
                 ex.getMessage(),
