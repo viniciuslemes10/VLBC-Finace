@@ -73,4 +73,14 @@ public class CustomizeResponseEntityExceptionHandler extends ResponseEntityExcep
         );
         return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(PermissionNotFoundException.class)
+    public final ResponseEntity<ExceptionResponse> handlerPermissionNotFoundException(Exception ex, WebRequest req) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse(
+                new Date(),
+                ex.getMessage(),
+                req.getDescription(false)
+        );
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
+    }
 }

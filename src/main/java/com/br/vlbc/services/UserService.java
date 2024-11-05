@@ -1,9 +1,11 @@
 package com.br.vlbc.services;
 
 import com.br.vlbc.exceptions.BalanceInvalidException;
+import com.br.vlbc.exceptions.PermissionNotFoundException;
 import com.br.vlbc.exceptions.UserNotFoundException;
 import com.br.vlbc.model.User;
-import com.br.vlbc.records.UserDTO;
+import com.br.vlbc.records.*;
+import com.br.vlbc.repositories.PermissionsRepository;
 import com.br.vlbc.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,9 +18,21 @@ public class UserService {
     @Autowired
     private UserRepository repository;
 
-    public User create(UserDTO data) {
-        var user = new User(data);
-        return repository.save(user);
+    @Autowired
+    private PermissionsRepository permissionsRepository;
+
+    public UserPermissionsDetailsDTO create(UserPermissionsDTO data) {
+        var user = new User(data.userDTO());
+        var permissions = permissionsRepository.
+                findByDescription(data.permissionsDTO().description())
+                .orElseThrow(() -> new PermissionNotFoundException("Permissão inválida!"));
+
+        var userSaved = repository.save(user);
+
+        var userDetailsDto = new UserDetailsDTO(userSaved);
+        var permissionDetailsDto = new PermissionsDetailsDTO(permissions);
+
+        return new UserPermissionsDetailsDTO(userDetailsDto, permissionDetailsDto);
     }
 
     public User findById(Long id) {

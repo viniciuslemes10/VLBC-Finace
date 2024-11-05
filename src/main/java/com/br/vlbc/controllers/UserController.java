@@ -2,6 +2,8 @@ package com.br.vlbc.controllers;
 
 import com.br.vlbc.records.UserDTO;
 import com.br.vlbc.records.UserDetailsDTO;
+import com.br.vlbc.records.UserPermissionsDTO;
+import com.br.vlbc.records.UserPermissionsDetailsDTO;
 import com.br.vlbc.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,9 +21,8 @@ public class UserController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<UserDetailsDTO> create(@RequestBody UserDTO data) {
-        var user = service.create(data);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new UserDetailsDTO(user));
+    public ResponseEntity<UserPermissionsDetailsDTO> create(@RequestBody UserPermissionsDTO data) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.create(data) );
     }
 
     @GetMapping(value = "/{id}",  produces = MediaType.APPLICATION_JSON_VALUE)
