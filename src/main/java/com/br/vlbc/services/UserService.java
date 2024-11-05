@@ -30,6 +30,7 @@ public class UserService {
         var user = findById(id);
 
         if(data.balance().compareTo(BigDecimal.ZERO) < 0) throw new BalanceInvalidException("Saldo inválido!");
+        user.setBalance(data.balance());
         if(data.userName() != null && !data.userName().isEmpty()) user.setUserName(data.userName());
         if(data.fullName() != null && !data.fullName().isEmpty()) user.setFullName(data.fullName());
         if(data.email() != null && !data.email().isEmpty()) user.setEmail(data.email());
