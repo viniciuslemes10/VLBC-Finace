@@ -16,7 +16,7 @@ import java.util.List;
 @EqualsAndHashCode(of = "id")
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "user_name", nullable = false)
