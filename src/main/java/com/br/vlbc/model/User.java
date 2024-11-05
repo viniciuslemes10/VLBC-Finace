@@ -1,5 +1,6 @@
 package com.br.vlbc.model;
 
+import com.br.vlbc.records.UserDTO;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -56,4 +57,16 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "permissions_id")
     )
     private List<Permissions> permissions;
+
+    public User(UserDTO data) {
+        this.userName = data.userName();
+        this.fullName = data.fullName();
+        this.email = data.email();
+        this.password = data.password();
+        this.balance = data.balance();
+        this.accountNonExpired = true;
+        this.accountNonLocked = true;
+        this.credentialsNonExpired = true;
+        this.enable = false;
+    }
 }
