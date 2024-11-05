@@ -1,7 +1,6 @@
 package com.br.vlbc.services;
 
 import com.br.vlbc.exceptions.BalanceInvalidException;
-import com.br.vlbc.exceptions.PermissionNotFoundException;
 import com.br.vlbc.exceptions.UserNotFoundException;
 import com.br.vlbc.model.User;
 import com.br.vlbc.records.*;
@@ -21,18 +20,9 @@ public class UserService {
     @Autowired
     private PermissionsRepository permissionsRepository;
 
-    public UserPermissionsDetailsDTO create(UserPermissionsDTO data) {
-        var user = new User(data.userDTO());
-        var permissions = permissionsRepository.
-                findByDescription(data.permissionsDTO().description())
-                .orElseThrow(() -> new PermissionNotFoundException("Permissão inválida!"));
-
-        var userSaved = repository.save(user);
-
-        var userDetailsDto = new UserDetailsDTO(userSaved);
-        var permissionDetailsDto = new PermissionsDetailsDTO(permissions);
-
-        return new UserPermissionsDetailsDTO(userDetailsDto, permissionDetailsDto);
+    public User create(UserDTO data) {
+        var user = new User(data);
+        return repository.save(user);
     }
 
     public User findById(Long id) {

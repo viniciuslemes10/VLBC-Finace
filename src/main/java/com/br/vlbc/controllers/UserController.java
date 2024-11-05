@@ -21,8 +21,9 @@ public class UserController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<UserPermissionsDetailsDTO> create(@RequestBody UserPermissionsDTO data) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.create(data) );
+    public ResponseEntity<UserDetailsDTO> create(@RequestBody UserDTO data) {
+        var user = service.create(data);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new UserDetailsDTO(user));
     }
 
     @GetMapping(value = "/{id}",  produces = MediaType.APPLICATION_JSON_VALUE)
