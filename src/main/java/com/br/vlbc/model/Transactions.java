@@ -46,5 +46,5 @@ public class Transactions {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "categoria_id")
-    private Categoria categoria;
+    private Category categoria;
 }

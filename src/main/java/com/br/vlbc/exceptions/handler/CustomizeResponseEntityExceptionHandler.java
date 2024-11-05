@@ -1,9 +1,9 @@
 package com.br.vlbc.exceptions.handler;
 
-import com.br.vlbc.exceptions.CategoriaExistException;
-import com.br.vlbc.exceptions.CategoriaNotFoundException;
+import com.br.vlbc.exceptions.CategoryExistException;
+import com.br.vlbc.exceptions.CategoryNotFoundException;
 import com.br.vlbc.exceptions.ExceptionResponse;
-import com.br.vlbc.exceptions.InvalidTypeArgumentException;
+import com.br.vlbc.exceptions.InvalidTypeException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -27,7 +27,7 @@ public class CustomizeResponseEntityExceptionHandler extends ResponseEntityExcep
         return new ResponseEntity<>(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @ExceptionHandler(CategoriaNotFoundException.class)
+    @ExceptionHandler(CategoryNotFoundException.class)
     public final ResponseEntity<ExceptionResponse> handlerCategoriaNotFoundException(Exception ex, WebRequest req) {
         ExceptionResponse exceptionResponse = new ExceptionResponse(
                 new Date(),
@@ -37,7 +37,7 @@ public class CustomizeResponseEntityExceptionHandler extends ResponseEntityExcep
         return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(CategoriaExistException.class)
+    @ExceptionHandler(CategoryExistException.class)
     public final ResponseEntity<ExceptionResponse> handlerCategoriaExistException(Exception ex, WebRequest req) {
         ExceptionResponse exceptionResponse = new ExceptionResponse(
                 new Date(),
@@ -47,7 +47,7 @@ public class CustomizeResponseEntityExceptionHandler extends ResponseEntityExcep
         return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(InvalidTypeArgumentException.class)
+    @ExceptionHandler(InvalidTypeException.class)
     public final ResponseEntity<ExceptionResponse> handlerInvalidTypeArgumentException(Exception ex, WebRequest req) {
         ExceptionResponse exceptionResponse = new ExceptionResponse(
                 new Date(),

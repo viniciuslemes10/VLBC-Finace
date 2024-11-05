@@ -1,8 +1,8 @@
 package com.br.vlbc.controllers;
 
-import com.br.vlbc.records.CategoriaDTO;
-import com.br.vlbc.records.CategoriaDetalhamentoDTO;
-import com.br.vlbc.services.CategoriaService;
+import com.br.vlbc.records.CategoryDTO;
+import com.br.vlbc.records.CategoryDetailsDTO;
+import com.br.vlbc.services.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -13,26 +13,26 @@ import java.util.List;
 
 @RestController
 @RequestMapping("api/categorias/v1")
-public class CategoriaController {
+public class CategoryController {
     @Autowired
-    private CategoriaService service;
+    private CategoryService service;
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE,
                 produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CategoriaDetalhamentoDTO> create(@RequestBody CategoriaDTO data) {
-        var categoria = service.create(data);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new CategoriaDetalhamentoDTO(categoria));
+    public ResponseEntity<CategoryDetailsDTO> create(@RequestBody CategoryDTO data) {
+        var category = service.create(data);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new CategoryDetailsDTO(category));
     }
 
     @GetMapping(value = "/{id}",
                 produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CategoriaDetalhamentoDTO> findById(@PathVariable("id") Long id) {
-        var categoria = service.findById(id);
-        return ResponseEntity.ok(new CategoriaDetalhamentoDTO(categoria));
+    public ResponseEntity<CategoryDetailsDTO> findById(@PathVariable("id") Long id) {
+        var category = service.findById(id);
+        return ResponseEntity.ok(new CategoryDetailsDTO(category));
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<CategoriaDetalhamentoDTO>> findAll() {
+    public ResponseEntity<List<CategoryDetailsDTO>> findAll() {
         return ResponseEntity.ok(service.allCategoria());
     }
 
@@ -44,10 +44,10 @@ public class CategoriaController {
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CategoriaDetalhamentoDTO> update(
-            @RequestBody CategoriaDTO data,
+    public ResponseEntity<CategoryDetailsDTO> update(
+            @RequestBody CategoryDTO data,
             @PathVariable("id") Long id) {
-        var categoria= service.update(data, id);
-        return ResponseEntity.ok(new CategoriaDetalhamentoDTO(categoria));
+        var category= service.update(data, id);
+        return ResponseEntity.ok(new CategoryDetailsDTO(category));
     }
 }

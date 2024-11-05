@@ -1,14 +1,14 @@
 package com.br.vlbc.records;
 
 import com.br.vlbc.enums.Type;
-import com.br.vlbc.model.Categoria;
+import com.br.vlbc.model.Category;
 
-public record CategoriaDetalhamentoDTO(
+public record CategoryDetailsDTO(
         Long id,
         String name,
         Type type
 ) {
-    public CategoriaDetalhamentoDTO(Categoria categoria) {
+    public CategoryDetailsDTO(Category categoria) {
         this(categoria.getId(), categoria.getName(), categoria.getType());
     }
 }

@@ -1,12 +1,12 @@
 package com.br.vlbc.services;
 
 import com.br.vlbc.enums.Type;
-import com.br.vlbc.exceptions.CategoriaExistException;
-import com.br.vlbc.exceptions.CategoriaNotFoundException;
-import com.br.vlbc.exceptions.InvalidTypeArgumentException;
-import com.br.vlbc.model.Categoria;
-import com.br.vlbc.records.CategoriaDTO;
-import com.br.vlbc.repositories.CategoriaRepository;
+import com.br.vlbc.exceptions.CategoryExistException;
+import com.br.vlbc.exceptions.CategoryNotFoundException;
+import com.br.vlbc.exceptions.InvalidTypeException;
+import com.br.vlbc.model.Category;
+import com.br.vlbc.records.CategoryDTO;
+import com.br.vlbc.repositories.CategoryRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,13 +20,13 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-class CategoriaServiceTest {
+class CategoryServiceTest {
 
     @InjectMocks
-    private CategoriaService service;
+    private CategoryService service;
 
     @Mock
-    private CategoriaRepository repository;
+    private CategoryRepository repository;
 
     @BeforeEach
     void setUp() {
@@ -36,36 +36,36 @@ class CategoriaServiceTest {
     @Test
     @DisplayName("Deve ter sucesso ao criar uma Categoria com informações válidas")
     void testCreatedSuccess() {
-        CategoriaDTO data = new CategoriaDTO("Transporte", "EXPENSES");
-        var categoria = new Categoria(data);
+        CategoryDTO data = new CategoryDTO("Transporte", "EXPENSES");
+        var category = new Category(data);
 
-        when(repository.findByName(categoria.getName())).thenReturn(Optional.empty());
-        when(repository.save(categoria)).thenReturn(categoria);
+        when(repository.findByName(category.getName())).thenReturn(Optional.empty());
+        when(repository.save(category)).thenReturn(category);
 
         var result = service.create(data);
 
         assertNotNull(result);
-        assertEquals(categoria.getName(), result.getName());
-        assertEquals(categoria.getType(), result.getType());
+        assertEquals(category.getName(), result.getName());
+        assertEquals(category.getType(), result.getType());
 
-        verify(repository).findByName(categoria.getName());
-        verify(repository).save(categoria);
+        verify(repository).findByName(category.getName());
+        verify(repository).save(category);
     }
 
     @Test
     @DisplayName("Deve lançar uma exceção ao tentar criar uma Categoria que já está registrada")
     void testShouldFailToCreateCategoryIfAlreadyExists() {
-        CategoriaDTO data = new CategoriaDTO("Transporte", "EXPENSES");
-        var categoria = new Categoria(data);
+        CategoryDTO data = new CategoryDTO("Transporte", "EXPENSES");
+        var category = new Category(data);
 
-        when(repository.findByName(categoria.getName())).thenReturn(Optional.of(categoria));
+        when(repository.findByName(category.getName())).thenReturn(Optional.of(category));
 
-        CategoriaExistException categoriaExistException = assertThrows(CategoriaExistException.class, () -> {
+        CategoryExistException categoriaExistException = assertThrows(CategoryExistException.class, () -> {
                         service.create(data);
         });
 
         assertEquals("Categoria já registrada!", categoriaExistException.getMessage());
-        verify(repository).findByName(categoria.getName());
+        verify(repository).findByName(category.getName());
         verify(repository, never()).save(any());
     }
 
@@ -74,10 +74,10 @@ class CategoriaServiceTest {
     void testFindCategoryByIdSuccess() {
         Long id = 1L;
 
-        CategoriaDTO data = new CategoriaDTO("Transporte", "EXPENSES");
-        var categoria = new Categoria(data);
+        CategoryDTO data = new CategoryDTO("Transporte", "EXPENSES");
+        var category = new Category(data);
 
-        when(repository.findById(id)).thenReturn(Optional.of(categoria));
+        when(repository.findById(id)).thenReturn(Optional.of(category));
 
         var result = service.findById(id);
 
@@ -85,8 +85,8 @@ class CategoriaServiceTest {
         assertNotNull(result.getName());
         assertNotNull(result.getType());
 
-        assertEquals(categoria.getName(), result.getName());
-        assertEquals(categoria.getType(), result.getType());
+        assertEquals(category.getName(), result.getName());
+        assertEquals(category.getType(), result.getType());
 
         verify(repository).findById(id);
     }
@@ -98,7 +98,7 @@ class CategoriaServiceTest {
 
         when(repository.findById(id)).thenReturn(Optional.empty());
 
-        CategoriaNotFoundException exception = assertThrows(CategoriaNotFoundException.class, () -> {
+        CategoryNotFoundException exception = assertThrows(CategoryNotFoundException.class, () -> {
             service.findById(id);
         });
 
@@ -111,13 +111,13 @@ class CategoriaServiceTest {
     @Test
     @DisplayName("Successo ao atualizar uma Categoria")
     void testSuccessfulCategoryUpdate() {
-        CategoriaDTO dataUpdate = new CategoriaDTO("Alimentação", "REVENUE");
+        CategoryDTO dataUpdate = new CategoryDTO("Alimentação", "REVENUE");
 
-        var categoria = new Categoria(dataUpdate);
+        var category = new Category(dataUpdate);
         Long id = 1L;
 
-        when(repository.findById(id)).thenReturn(Optional.of(categoria));
-        when(repository.save(categoria)).thenReturn(categoria);
+        when(repository.findById(id)).thenReturn(Optional.of(category));
+        when(repository.save(category)).thenReturn(category);
 
         var result = service.update(dataUpdate, id);
 
@@ -126,18 +126,18 @@ class CategoriaServiceTest {
         assertEquals(Type.REVENUE, result.getType());
 
         verify(repository).findById(id);
-        verify(repository).save(categoria);
+        verify(repository).save(category);
     }
 
     @Test
     @DisplayName("Deve lançar exceção ao tentar atualizar uma Categoria não encontrada")
     void testUpdateThrowsCategoriaNotFoundException() {
-        CategoriaDTO dataUpdate = new CategoriaDTO("Transporte", "INVESTMENT");
+        CategoryDTO dataUpdate = new CategoryDTO("Transporte", "INVESTMENT");
         Long id = 2L;
 
         when(repository.findById(id)).thenReturn(Optional.empty());
 
-        CategoriaNotFoundException exception = assertThrows(CategoriaNotFoundException.class, () -> {
+        CategoryNotFoundException exception = assertThrows(CategoryNotFoundException.class, () -> {
             service.update(dataUpdate, id);
         });
 
@@ -150,14 +150,14 @@ class CategoriaServiceTest {
     @Test
     @DisplayName("Deve manter dados existentes ao atualizar CategoriaDTO com dados vazios")
     void testUpdatePreservesDataWithEmptyCategoriaDTO() {
-        CategoriaDTO data = new CategoriaDTO("Transporte", "INVESTMENT");
-        CategoriaDTO dataUpdate = new CategoriaDTO("", "");
+        CategoryDTO data = new CategoryDTO("Transporte", "INVESTMENT");
+        CategoryDTO dataUpdate = new CategoryDTO("", "");
         Long id = 1L;
 
-        var categoria = new Categoria(data);
+        var category = new Category(data);
 
-        when(repository.findById(id)).thenReturn(Optional.of(categoria));
-        when(repository.save(categoria)).thenReturn(categoria);
+        when(repository.findById(id)).thenReturn(Optional.of(category));
+        when(repository.save(category)).thenReturn(category);
 
         var result = service.update(dataUpdate, id);
 
@@ -166,21 +166,21 @@ class CategoriaServiceTest {
         assertEquals(Type.INVESTMENT, result.getType());
 
         verify(repository).findById(id);
-        verify(repository).save(categoria);
+        verify(repository).save(category);
     }
 
     @Test
     @DisplayName("Atualização de Categoria deve falhar com tipo inválido")
     void testUpdateThrowsExceptionForInvalidTypeArgumentException() {
-        CategoriaDTO data = new CategoriaDTO("Transporte", "INVESTMENT");
-        CategoriaDTO dataUpdate = new CategoriaDTO("Alimentação", "INVALID");
+        CategoryDTO data = new CategoryDTO("Transporte", "INVESTMENT");
+        CategoryDTO dataUpdate = new CategoryDTO("Alimentação", "INVALID");
         Long id = 1L;
 
-        var categoria = new Categoria(data);
+        var category = new Category(data);
 
-        when(repository.findById(id)).thenReturn(Optional.of(categoria));
+        when(repository.findById(id)).thenReturn(Optional.of(category));
 
-        InvalidTypeArgumentException exception = assertThrows(InvalidTypeArgumentException.class, () -> {
+        InvalidTypeException exception = assertThrows(InvalidTypeException.class, () -> {
             service.update(dataUpdate, id);
         });
 
@@ -193,17 +193,17 @@ class CategoriaServiceTest {
     @Test
     @DisplayName("Sucesso ao deletar uma Categoria")
     void testDeleteCategorySuccessfully() {
-        CategoriaDTO data = new CategoriaDTO("Transporte", "INVESTMENT");
+        CategoryDTO data = new CategoryDTO("Transporte", "INVESTMENT");
         Long id = 1L;
 
-        var categoria = new Categoria(data);
+        var category = new Category(data);
 
-        when(repository.findById(id)).thenReturn(Optional.of(categoria));
+        when(repository.findById(id)).thenReturn(Optional.of(category));
 
         service.delete(id);
 
         verify(repository).findById(id);
-        verify(repository).delete(categoria);
+        verify(repository).delete(category);
     }
 
     @Test
@@ -213,7 +213,7 @@ class CategoriaServiceTest {
 
         when(repository.findById(id)).thenReturn(Optional.empty());
 
-        CategoriaNotFoundException exception = assertThrows(CategoriaNotFoundException.class, () -> {
+        CategoryNotFoundException exception = assertThrows(CategoryNotFoundException.class, () -> {
             service.delete(id);
         });
 
@@ -226,13 +226,13 @@ class CategoriaServiceTest {
     @Test
     @DisplayName("Deve retornar todas as Categorias com sucesso")
     void testFetchAllCategoriasReturnsSuccess() {
-        CategoriaDTO data = new CategoriaDTO("Transporte", "INVESTMENT");
-        CategoriaDTO dataTwo = new CategoriaDTO("Alimentação", "EXPENSES");
+        CategoryDTO data = new CategoryDTO("Transporte", "INVESTMENT");
+        CategoryDTO dataTwo = new CategoryDTO("Alimentação", "EXPENSES");
 
-        var categoria = new Categoria(data);
-        var categoriaTwo = new Categoria(dataTwo);
+        var category = new Category(data);
+        var categoryTwo = new Category(dataTwo);
 
-        List<Categoria> categoriasList = List.of(categoria, categoriaTwo);
+        List<Category> categoriasList = List.of(category, categoryTwo);
         when(repository.findAll()).thenReturn(categoriasList);
 
         var result = service.allCategoria();

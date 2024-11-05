@@ -1,7 +1,7 @@
 package com.br.vlbc.model;
 
 import com.br.vlbc.enums.Type;
-import com.br.vlbc.records.CategoriaDTO;
+import com.br.vlbc.records.CategoryDTO;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -14,7 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(of = "id")
-public class Categoria {
+public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -29,7 +29,7 @@ public class Categoria {
     @OneToMany(mappedBy = "categoria", fetch = FetchType.LAZY)
     private List<Transactions> transactions;
 
-    public Categoria(CategoriaDTO data) {
+    public Category(CategoryDTO data) {
         this.name = data.name();
         this.type = Type.valueOf(data.type());
     }

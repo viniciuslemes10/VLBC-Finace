@@ -1,6 +1,6 @@
 package com.br.vlbc.records;
 
-public record CategoriaDTO(
+public record CategoryDTO(
         String name,
         String type
 ) {
