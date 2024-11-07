@@ -1,10 +1,14 @@
 package com.br.vlbc.services;
 
 import com.br.vlbc.exceptions.BalanceInvalidException;
+import com.br.vlbc.exceptions.PermissionNotFoundException;
 import com.br.vlbc.exceptions.UserNotFoundException;
+import com.br.vlbc.model.Permissions;
 import com.br.vlbc.model.User;
+import com.br.vlbc.model.UserPermissions;
 import com.br.vlbc.records.*;
 import com.br.vlbc.repositories.PermissionsRepository;
+import com.br.vlbc.repositories.UserPermissionsRepository;
 import com.br.vlbc.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,9 +24,28 @@ public class UserService {
     @Autowired
     private PermissionsRepository permissionsRepository;
 
-    public User create(UserDTO data) {
-        var user = new User(data);
-        return repository.save(user);
+    @Autowired
+    private UserPermissionsRepository userPermissionsRepository;
+
+    public UserPermissionsDetailsDTO create(UserPermissionsDTO data) {
+        var user = new User(data.userDTO());
+        repository.save(user);
+
+        var permissions = permissionsRepository.findByDescription(data.permissionsDTO().description())
+                .orElseThrow(() ->
+                    new PermissionNotFoundException("Permission not found!"));
+
+        var userPermissions = new UserPermissions(user, permissions);
+        userPermissionsRepository.save(userPermissions);
+
+        return fromDTOs(user, permissions);
+    }
+
+    private UserPermissionsDetailsDTO fromDTOs(User user, Permissions permissions) {
+        var userDTO = new UserDetailsDTO(user);
+        var permissionsDTO = new PermissionsDetailsDTO(permissions);
+
+        return new UserPermissionsDetailsDTO(userDTO, permissionsDTO);
     }
 
     public User findById(Long id) {
