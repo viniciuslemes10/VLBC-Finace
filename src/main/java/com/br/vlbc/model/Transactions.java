@@ -41,6 +41,9 @@ public class Transactions {
     @Column(name = "value", nullable = false)
     private BigDecimal value;
 
+    @Column(name = "previous_balance", nullable = false)
+    private BigDecimal previousBalance;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     private User user;
@@ -56,6 +59,7 @@ public class Transactions {
         this.type = data.type();
         this.method = data.method();
         this.value = data.value();
+        this.previousBalance = user.getBalance();
         this.user = user;
         this.category = category;
     }

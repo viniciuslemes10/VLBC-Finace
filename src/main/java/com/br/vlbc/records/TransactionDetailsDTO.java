@@ -16,6 +16,7 @@ public record TransactionDetailsDTO(
         Type type,
         Method method,
         BigDecimal value,
+        BigDecimal previousBalance,
         UserDetailsDTO userDTO,
         CategoryDetailsDTO categoryDTO
 ) {
@@ -28,6 +29,7 @@ public record TransactionDetailsDTO(
                 transaction.getType(),
                 transaction.getMethod(),
                 transaction.getValue(),
+                transaction.getPreviousBalance(),
                 new UserDetailsDTO(transaction.getUser()),
                 new CategoryDetailsDTO(transaction.getCategory())
         );
