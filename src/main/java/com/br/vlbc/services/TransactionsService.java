@@ -1,5 +1,6 @@
 package com.br.vlbc.services;
 
+import com.br.vlbc.enums.Type;
 import com.br.vlbc.exceptions.BalanceInvalidException;
 import com.br.vlbc.model.Transactions;
 import com.br.vlbc.records.TransactionsDTO;
@@ -42,6 +43,13 @@ public class TransactionsService {
             throw new BalanceInvalidException("Erro ao processar transação: Tipo de categoria incompatível!");
         }
 
+        if(transaction.getType() == Type.REVENUE || transaction.getType() == Type.INVESTMENT) {
+            user.setBalance(user.getBalance().add(transaction.getValue()));
+            userRepository.save(user);
+
+            return repository.save(transaction);
+        }
+
         if (user.getBalance().compareTo(transaction.getValue()) >= 0) {
             user.setBalance(user.getBalance().subtract(transaction.getValue()));
             userRepository.save(user);
@@ -52,7 +60,6 @@ public class TransactionsService {
         }
     }
 
-
     public Transactions findById(Long id) {
         return repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Transaction not found."));
@@ -62,12 +69,17 @@ public class TransactionsService {
         return repository.findAllOfIdUser(idUser);
     }
 
-//    public Transactions update(TransactionsDTO data) {
-//
-//    }
-
     public void delete(Long id) {
         var transaction = findById(id);
+        var user = userService.findById(transaction.getUser().getId());
+
+        if(transaction.getType() == Type.REVENUE || transaction.getType() == Type.INVESTMENT) {
+            user.setBalance(user.getBalance().subtract(transaction.getValue()));
+        } else {
+            user.setBalance(user.getBalance().add(transaction.getValue()));
+        }
+
+        userRepository.save(user);
         repository.delete(transaction);
     }
 }
