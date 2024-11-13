@@ -10,6 +10,6 @@ import java.util.List;
 
 @Repository
 public interface TransactionRepository extends JpaRepository<Transactions, Long> {
-    @Query("SELECT t FROM Transactions t WHERE t.user = :idUser")
+    @Query("SELECT t FROM Transactions t WHERE t.user.id = :idUser")
     List<Transactions> findAllOfIdUser(@Param("idUser") Long idUser);
 }
