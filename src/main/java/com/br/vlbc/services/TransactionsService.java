@@ -1,10 +1,16 @@
 package com.br.vlbc.services;
 
+import com.br.vlbc.exceptions.BalanceInvalidException;
 import com.br.vlbc.model.Transactions;
+import com.br.vlbc.records.TransactionsDTO;
 import com.br.vlbc.repositories.TransactionRepository;
-import org.hibernate.Transaction;
+import com.br.vlbc.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.util.List;
 
 @Service
 public class TransactionsService {
@@ -12,23 +18,56 @@ public class TransactionsService {
     @Autowired
     private TransactionRepository repository;
 
-    public Transactions create(TransactionDTO data) {
+    @Autowired
+    private UserService userService;
 
+    @Autowired
+    private CategoryService categoryService;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Transactional
+    public Transactions create(TransactionsDTO data) {
+        var user = userService.findById(data.userDTO().id());
+        var category = categoryService.findById(data.categoryDTO().id());
+
+        if (data.value().compareTo(BigDecimal.ZERO) < 0) {
+            throw new BalanceInvalidException("Valor inválido!");
+        }
+
+        var transaction = new Transactions(data, category, user);
+
+        if (!category.getType().equals(transaction.getType())) {
+            throw new BalanceInvalidException("Erro ao processar transação: Tipo de categoria incompatível!");
+        }
+
+        if (user.getBalance().compareTo(transaction.getValue()) >= 0) {
+            user.setBalance(user.getBalance().subtract(transaction.getValue()));
+            userRepository.save(user);
+
+            return repository.save(transaction);
+        } else {
+            throw new BalanceInvalidException("Saldo insuficiente!");
+        }
     }
 
-    public Transaction findById(Long id) {
 
+    public Transactions findById(Long id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Transaction not found."));
     }
 
-    public Transaction findAll() {
-
+    public List<Transactions> findAll(Long idUser) {
+        return repository.findAllOfIdUser(idUser);
     }
 
-    public Transaction update(TransactionDTO data) {
+//    public Transactions update(TransactionsDTO data) {
+//
+//    }
 
-    }
-
-    public Transaction delete(Long id) {
-
+    public void delete(Long id) {
+        var transaction = findById(id);
+        repository.delete(transaction);
     }
 }
