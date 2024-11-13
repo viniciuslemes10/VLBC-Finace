@@ -26,7 +26,7 @@ public class Category {
     @Enumerated(EnumType.STRING)
     private Type type;
 
-    @OneToMany(mappedBy = "categoria", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
     private List<Transactions> transactions;
 
     public Category(CategoryDTO data) {
