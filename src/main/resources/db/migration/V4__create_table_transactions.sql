@@ -6,6 +6,7 @@ CREATE TABLE tb_transactions (
     type VARCHAR(50) NOT NULL,
     method VARCHAR(50) NOT NULL,
     value DECIMAL(19, 2) NOT NULL,
+    previous_balance DECIMAL(19, 2) NOT NULL,
     user_id BIGINT,
     categoria_id BIGINT,
     FOREIGN KEY (user_id) REFERENCES tb_users(id),
