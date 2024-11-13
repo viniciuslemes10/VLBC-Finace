@@ -2,6 +2,7 @@ package com.br.vlbc.model;
 
 import com.br.vlbc.enums.Method;
 import com.br.vlbc.enums.Type;
+import com.br.vlbc.records.TransactionsDTO;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -17,7 +18,7 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(of = "id")
 public class Transactions {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "name", nullable = false)
@@ -47,4 +48,15 @@ public class Transactions {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "categoria_id")
     private Category category;
+
+    public Transactions(TransactionsDTO data, Category category, User user) {
+        this.name = data.name();
+        this.dateOfCreation = LocalDateTime.now();
+        this.updateDate = dateOfCreation;
+        this.type = data.type();
+        this.method = data.method();
+        this.value = data.value();
+        this.user = user;
+        this.category = category;
+    }
 }
