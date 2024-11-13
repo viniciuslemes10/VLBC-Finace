@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.function.Consumer;
 
 @Service
 public class UserService {
@@ -56,14 +57,21 @@ public class UserService {
     public User update(UserDTO data, Long id) {
         var user = findById(id);
 
-        if(data.balance().compareTo(BigDecimal.ZERO) < 0) throw new BalanceInvalidException("Saldo inválido!");
+        if(data.balance().compareTo(BigDecimal.ZERO) < 0) throw new BalanceInvalidException("Valor inválido!");
         user.setBalance(data.balance());
-        if(data.userName() != null && !data.userName().isEmpty()) user.setUserName(data.userName());
-        if(data.fullName() != null && !data.fullName().isEmpty()) user.setFullName(data.fullName());
-        if(data.email() != null && !data.email().isEmpty()) user.setEmail(data.email());
-        if(data.password() != null && !data.password().isEmpty()) user.setPassword(data.password());
+
+        updateUserFieldsIfNotEmpty(data.userName(), user::setUserName);
+        updateUserFieldsIfNotEmpty(data.fullName(), user::setFullName);
+        updateUserFieldsIfNotEmpty(data.email(), user::setEmail);
+        updateUserFieldsIfNotEmpty(data.password(), user::setPassword);
 
         return repository.save(user);
+    }
+
+    public void updateUserFieldsIfNotEmpty(String data, Consumer<String> update) {
+        if(data != null && !data.isEmpty()){
+            update.accept(data);
+        }
     }
 
     public List<User> findAllUsers() {
