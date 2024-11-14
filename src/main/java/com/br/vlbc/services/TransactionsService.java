@@ -35,12 +35,17 @@ public class TransactionsService {
     private UserRepository userRepository;
 
     @Transactional
-    public Transactions create(TransactionsDTO data) {
+    public Transactions deposit(TransactionsDTO data) {
         var user = userService.findById(data.userDTO().id());
         var category = categoryService.findById(data.categoryDTO().id());
 
         if (data.value().compareTo(BigDecimal.ZERO) < 0) {
             throw new BalanceInvalidException("Valor inválido!");
+        }
+        var typeData = Type.valueOf(String.valueOf(data.type()));
+
+        if (typeData.equals(Type.EXPENSES)) {
+            throw new RuntimeException("Tipo inválido, escolha INVESTMENT ou REVENUE.");
         }
 
         var transaction = new Transactions(data, category, user);
@@ -49,11 +54,30 @@ public class TransactionsService {
             throw new BalanceInvalidException("Erro ao processar transação: Tipo de categoria incompatível!");
         }
 
-        if(transaction.getType() == Type.REVENUE || transaction.getType() == Type.INVESTMENT) {
-            user.setBalance(user.getBalance().add(transaction.getValue()));
-            userRepository.save(user);
+        user.setBalance(user.getBalance().add(transaction.getValue()));
+        userRepository.save(user);
 
-            return repository.save(transaction);
+        return repository.save(transaction);
+
+    }
+
+    public Transactions toRemove(TransactionsDTO data) {
+        var user = userService.findById(data.userDTO().id());
+        var category = categoryService.findById(data.categoryDTO().id());
+
+        if (data.value().compareTo(BigDecimal.ZERO) < 0) {
+            throw new BalanceInvalidException("Valor inválido!");
+        }
+        var typeData = Type.valueOf(String.valueOf(data.type()));
+
+        if (!typeData.equals(Type.EXPENSES)) {
+            throw new RuntimeException("Tipo inválido.");
+        }
+
+        var transaction = new Transactions(data, category, user);
+
+        if (!category.getType().equals(transaction.getType())) {
+            throw new BalanceInvalidException("Erro ao processar transação: Tipo de categoria incompatível!");
         }
 
         if (user.getBalance().compareTo(transaction.getValue()) >= 0) {
