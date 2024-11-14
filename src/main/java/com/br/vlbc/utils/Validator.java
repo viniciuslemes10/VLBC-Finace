@@ -1,6 +1,9 @@
 package com.br.vlbc.utils;
 
 import com.br.vlbc.exceptions.BalanceInvalidException;
+import com.br.vlbc.exceptions.DatesIllegalArgumentException;
+import com.br.vlbc.exceptions.DatesNotNullException;
+import com.br.vlbc.exceptions.EnumInvalidException;
 import com.br.vlbc.records.transactions.TransactionsFilterDatesDTO;
 import org.springframework.stereotype.Component;
 
@@ -29,14 +32,14 @@ public class Validator {
     public <T extends Enum<T>> T convertToEnum(Class<T> enumClass, String givenValue) {
         try {
             return Enum.valueOf(enumClass, givenValue);
-        } catch (IllegalArgumentException ex) {
-            throw new RuntimeException("Valor inválido para o enum.");
+        } catch (RuntimeException ex) {
+            throw new EnumInvalidException("Valor inválido para o enum.");
         }
     }
 
     public void validateRequiredDates(TransactionsFilterDatesDTO data) {
         if(data.startDate() == null || data.endDate() == null) {
-            throw new RuntimeException("Os campos são obrigatórios.");
+            throw new DatesNotNullException("Os campos são obrigatórios.");
         }
     }
 
@@ -50,7 +53,7 @@ public class Validator {
 
     public void validateStartDateBeforeEndDate(TransactionsFilterDatesDTO data) {
         if (data.startDate().isAfter(data.endDate())) {
-            throw new RuntimeException("A data de início não pode ser posterior à data de término.");
+            throw new DatesIllegalArgumentException("A data de início não pode ser posterior à data de término.");
         }
     }
 }

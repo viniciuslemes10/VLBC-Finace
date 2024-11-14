@@ -83,4 +83,44 @@ public class CustomizeResponseEntityExceptionHandler extends ResponseEntityExcep
         );
         return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(TransactionNotFoundException.class)
+    public final ResponseEntity<ExceptionResponse> handlerTransactionNotFoundException(Exception ex, WebRequest req) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse(
+                new Date(),
+                ex.getMessage(),
+                req.getDescription(false)
+        );
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(EnumInvalidException.class)
+    public final ResponseEntity<ExceptionResponse> handlerEnumInvalidException(Exception ex, WebRequest req) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse(
+                new Date(),
+                ex.getMessage(),
+                req.getDescription(false)
+        );
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(DatesNotNullException.class)
+    public final ResponseEntity<ExceptionResponse> handlerDatesNotNullException(Exception ex, WebRequest req) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse(
+                new Date(),
+                ex.getMessage(),
+                req.getDescription(false)
+        );
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(DatesIllegalArgumentException.class)
+    public final ResponseEntity<ExceptionResponse> handlerDatesIllegalArgumentException(Exception ex, WebRequest req) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse(
+                new Date(),
+                ex.getMessage(),
+                req.getDescription(false)
+        );
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
+    }
 }

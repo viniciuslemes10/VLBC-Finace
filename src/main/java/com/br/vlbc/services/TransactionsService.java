@@ -2,6 +2,7 @@ package com.br.vlbc.services;
 
 import com.br.vlbc.enums.Method;
 import com.br.vlbc.enums.Type;
+import com.br.vlbc.exceptions.TransactionNotFoundException;
 import com.br.vlbc.model.Category;
 import com.br.vlbc.model.Transactions;
 import com.br.vlbc.model.User;
@@ -65,7 +66,7 @@ public class TransactionsService {
 
     public Transactions findById(Long id) {
         return repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Transaction not found."));
+                .orElseThrow(() -> new TransactionNotFoundException("Transaction not found."));
     }
 
     public List<Transactions> findAll(Long idUser) {
