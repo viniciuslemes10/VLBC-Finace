@@ -2,6 +2,7 @@ package com.br.vlbc.controllers;
 
 import com.br.vlbc.records.TransactionDetailsDTO;
 import com.br.vlbc.records.TransactionsDTO;
+import com.br.vlbc.records.TransactionsTypeDTO;
 import com.br.vlbc.services.TransactionsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -34,8 +35,16 @@ public class TransactionController {
     }
 
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<TransactionDetailsDTO> delete(@PathVariable Long id) {
+    public ResponseEntity<?> delete(@PathVariable Long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping(value = "/type/{id}", produces = MediaType.APPLICATION_JSON_VALUE,
+                consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<TransactionDetailsDTO>> findByType(
+            @RequestBody TransactionsTypeDTO data,
+            @PathVariable Long id) {
+        return ResponseEntity.ok(TransactionDetailsDTO.fromListEntityToListDTO(service.findByType(data, id)));
     }
 }

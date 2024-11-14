@@ -4,6 +4,7 @@ import com.br.vlbc.enums.Type;
 import com.br.vlbc.exceptions.BalanceInvalidException;
 import com.br.vlbc.model.Transactions;
 import com.br.vlbc.records.TransactionsDTO;
+import com.br.vlbc.records.TransactionsTypeDTO;
 import com.br.vlbc.repositories.TransactionRepository;
 import com.br.vlbc.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -81,5 +83,21 @@ public class TransactionsService {
 
         userRepository.save(user);
         repository.delete(transaction);
+    }
+
+    public List<Transactions> findByType(TransactionsTypeDTO data, Long id) {
+        Type typeEnum;
+
+        try {
+            typeEnum = Type.valueOf(data.type());
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Tipo inválido.");
+        }
+
+        var listOfUserTransaction = repository.findAllOfIdUser(id);
+
+        return listOfUserTransaction.stream()
+                .filter(t -> t.getType().equals(typeEnum))
+                .toList();
     }
 }
