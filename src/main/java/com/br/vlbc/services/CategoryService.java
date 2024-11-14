@@ -1,6 +1,7 @@
 package com.br.vlbc.services;
 
 import com.br.vlbc.enums.Type;
+import com.br.vlbc.exceptions.BalanceInvalidException;
 import com.br.vlbc.exceptions.CategoryExistException;
 import com.br.vlbc.exceptions.CategoryNotFoundException;
 import com.br.vlbc.exceptions.InvalidTypeException;
@@ -64,5 +65,11 @@ public class CategoryService {
     public void delete(Long id) {
         var category = findById(id);
         repository.delete(category);
+    }
+
+    public void checkTransactionType(Type categoryType, Type transactionType) {
+        if (!categoryType.equals(transactionType)) {
+            throw new BalanceInvalidException("Erro ao processar transação: Tipo de categoria incompatível!");
+        }
     }
 }

@@ -16,16 +16,10 @@ public class TransactionController {
     @Autowired
     private TransactionsService service;
 
-    @PostMapping(value = "/deposit", consumes = MediaType.APPLICATION_JSON_VALUE,
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE,
                  produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<TransactionDetailsDTO> deposit(@RequestBody TransactionsDTO data) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(TransactionDetailsDTO.fromEntityToDTO(service.deposit(data)));
-    }
-
-    @PostMapping(value = "/remove", consumes = MediaType.APPLICATION_JSON_VALUE,
-                 produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<TransactionDetailsDTO> toRemove(@RequestBody TransactionsDTO data) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(TransactionDetailsDTO.fromEntityToDTO(service.toRemove(data)));
+    public ResponseEntity<TransactionDetailsDTO> createTransaction(@RequestBody TransactionsDTO data) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(TransactionDetailsDTO.fromEntityToDTO(service.createTransaction(data)));
     }
 
     @GetMapping(value = "/list/{id}", produces = MediaType.APPLICATION_JSON_VALUE)

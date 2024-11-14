@@ -1,9 +1,11 @@
 package com.br.vlbc.services;
 
+import com.br.vlbc.enums.Type;
 import com.br.vlbc.exceptions.BalanceInvalidException;
 import com.br.vlbc.exceptions.PermissionNotFoundException;
 import com.br.vlbc.exceptions.UserNotFoundException;
 import com.br.vlbc.model.Permissions;
+import com.br.vlbc.model.Transactions;
 import com.br.vlbc.model.User;
 import com.br.vlbc.model.UserPermissions;
 import com.br.vlbc.records.permissions.PermissionsDetailsDTO;
@@ -34,7 +36,7 @@ public class UserService {
 
     public UserPermissionsDetailsDTO create(UserPermissionsDTO data) {
         var user = new User(data.userDTO());
-        repository.save(user);
+        save(user);
 
         var permissions = permissionsRepository.findByDescription(data.permissionsDTO().description())
                 .orElseThrow(() ->
@@ -69,7 +71,7 @@ public class UserService {
         updateUserFieldsIfNotEmpty(data.email(), user::setEmail);
         updateUserFieldsIfNotEmpty(data.password(), user::setPassword);
 
-        return repository.save(user);
+        return save(user);
     }
 
     public void updateUserFieldsIfNotEmpty(String data, Consumer<String> update) {
@@ -85,5 +87,32 @@ public class UserService {
     public void delete(Long id) {
         var user = findById(id);
         repository.delete(user);
+    }
+
+    public void withdrawTransactionBalance(User user, Transactions transaction) {
+        if (user.getBalance().compareTo(transaction.getValue()) >= 0) {
+            user.setBalance(user.getBalance().subtract(transaction.getValue()));
+            save(user);
+        } else {
+            throw new BalanceInvalidException("Saldo insuficiente!");
+        }
+    }
+
+    public void depositTransactionBalance(User user, Transactions transaction) {
+        user.setBalance(user.getBalance().add(transaction.getValue()));
+        save(user);
+    }
+
+    public User save(User user) {
+        return repository.save(user);
+    }
+
+    public void updateUserBalanceBasedOnTransactionType(User user, Transactions transaction) {
+        if(transaction.getType() == Type.REVENUE || transaction.getType() == Type.INVESTMENT) {
+            user.setBalance(user.getBalance().subtract(transaction.getValue()));
+        } else {
+            user.setBalance(user.getBalance().add(transaction.getValue()));
+        }
+        save(user);
     }
 }
