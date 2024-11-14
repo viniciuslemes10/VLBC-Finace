@@ -1,6 +1,5 @@
 package com.br.vlbc.utils;
 
-import com.br.vlbc.enums.Type;
 import com.br.vlbc.exceptions.BalanceInvalidException;
 import com.br.vlbc.records.transactions.TransactionsFilterDatesDTO;
 import org.springframework.stereotype.Component;
