@@ -1,7 +1,7 @@
 package com.br.vlbc.model;
 
 import com.br.vlbc.enums.Type;
-import com.br.vlbc.records.CategoryDTO;
+import com.br.vlbc.records.categories.CategoryDTO;
 import jakarta.persistence.*;
 import lombok.*;
 

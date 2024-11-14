@@ -1,6 +1,6 @@
 package com.br.vlbc.model;
 
-import com.br.vlbc.records.UserDTO;
+import com.br.vlbc.records.users.UserDTO;
 import jakarta.persistence.*;
 import lombok.*;
 

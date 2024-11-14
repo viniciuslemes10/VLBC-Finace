@@ -1,4 +1,4 @@
-package com.br.vlbc.records;
+package com.br.vlbc.records.categories;
 
 import com.br.vlbc.enums.Type;
 import com.br.vlbc.model.Category;

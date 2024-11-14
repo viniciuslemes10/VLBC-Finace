@@ -1,9 +1,9 @@
 package com.br.vlbc.controllers;
 
-import com.br.vlbc.records.UserDTO;
-import com.br.vlbc.records.UserDetailsDTO;
-import com.br.vlbc.records.UserPermissionsDTO;
-import com.br.vlbc.records.UserPermissionsDetailsDTO;
+import com.br.vlbc.records.users.UserDTO;
+import com.br.vlbc.records.users.UserDetailsDTO;
+import com.br.vlbc.records.users.UserPermissionsDTO;
+import com.br.vlbc.records.users.UserPermissionsDetailsDTO;
 import com.br.vlbc.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

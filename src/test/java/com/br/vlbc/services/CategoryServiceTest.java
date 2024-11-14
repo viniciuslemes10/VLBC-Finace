@@ -5,7 +5,7 @@ import com.br.vlbc.exceptions.CategoryExistException;
 import com.br.vlbc.exceptions.CategoryNotFoundException;
 import com.br.vlbc.exceptions.InvalidTypeException;
 import com.br.vlbc.model.Category;
-import com.br.vlbc.records.CategoryDTO;
+import com.br.vlbc.records.categories.CategoryDTO;
 import com.br.vlbc.repositories.CategoryRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

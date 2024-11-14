@@ -1,7 +1,7 @@
 package com.br.vlbc.controllers;
 
-import com.br.vlbc.records.CategoryDTO;
-import com.br.vlbc.records.CategoryDetailsDTO;
+import com.br.vlbc.records.categories.CategoryDTO;
+import com.br.vlbc.records.categories.CategoryDetailsDTO;
 import com.br.vlbc.services.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

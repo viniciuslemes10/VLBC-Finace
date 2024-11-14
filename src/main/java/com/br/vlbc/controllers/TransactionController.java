@@ -1,8 +1,8 @@
 package com.br.vlbc.controllers;
 
-import com.br.vlbc.records.TransactionDetailsDTO;
-import com.br.vlbc.records.TransactionsDTO;
-import com.br.vlbc.records.TransactionsTypeDTO;
+import com.br.vlbc.records.transactions.TransactionDetailsDTO;
+import com.br.vlbc.records.transactions.TransactionsDTO;
+import com.br.vlbc.records.transactions.TransactionsFilterDTO;
 import com.br.vlbc.services.TransactionsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -43,8 +43,24 @@ public class TransactionController {
     @GetMapping(value = "/type/{id}", produces = MediaType.APPLICATION_JSON_VALUE,
                 consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<TransactionDetailsDTO>> findByType(
-            @RequestBody TransactionsTypeDTO data,
+            @RequestBody TransactionsFilterDTO data,
             @PathVariable Long id) {
         return ResponseEntity.ok(TransactionDetailsDTO.fromListEntityToListDTO(service.findByType(data, id)));
+    }
+
+    @GetMapping(value = "/name/{id}", produces = MediaType.APPLICATION_JSON_VALUE,
+            consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<TransactionDetailsDTO>> findByName(
+            @RequestBody TransactionsFilterDTO data,
+            @PathVariable Long id) {
+        return ResponseEntity.ok(TransactionDetailsDTO.fromListEntityToListDTO(service.findByName(data, id)));
+    }
+
+    @GetMapping(value = "/category/{id}", produces = MediaType.APPLICATION_JSON_VALUE,
+            consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<TransactionDetailsDTO>> findByCategory(
+            @RequestBody TransactionsFilterDTO data,
+            @PathVariable Long id) {
+        return ResponseEntity.ok(TransactionDetailsDTO.fromListEntityToListDTO(service.findByCategory(data, id)));
     }
 }

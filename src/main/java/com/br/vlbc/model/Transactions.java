@@ -2,7 +2,7 @@ package com.br.vlbc.model;
 
 import com.br.vlbc.enums.Method;
 import com.br.vlbc.enums.Type;
-import com.br.vlbc.records.TransactionsDTO;
+import com.br.vlbc.records.transactions.TransactionsDTO;
 import jakarta.persistence.*;
 import lombok.*;
 

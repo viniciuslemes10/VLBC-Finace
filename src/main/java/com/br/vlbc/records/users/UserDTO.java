@@ -1,4 +1,4 @@
-package com.br.vlbc.records;
+package com.br.vlbc.records.users;
 
 import java.math.BigDecimal;
 

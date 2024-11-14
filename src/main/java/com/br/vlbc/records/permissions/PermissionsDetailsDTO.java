@@ -1,4 +1,4 @@
-package com.br.vlbc.records;
+package com.br.vlbc.records.permissions;
 
 import com.br.vlbc.model.Permissions;
 

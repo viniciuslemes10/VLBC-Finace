@@ -3,8 +3,8 @@ package com.br.vlbc.services;
 import com.br.vlbc.enums.Type;
 import com.br.vlbc.exceptions.BalanceInvalidException;
 import com.br.vlbc.model.Transactions;
-import com.br.vlbc.records.TransactionsDTO;
-import com.br.vlbc.records.TransactionsTypeDTO;
+import com.br.vlbc.records.transactions.TransactionsDTO;
+import com.br.vlbc.records.transactions.TransactionsFilterDTO;
 import com.br.vlbc.repositories.TransactionRepository;
 import com.br.vlbc.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -85,11 +84,11 @@ public class TransactionsService {
         repository.delete(transaction);
     }
 
-    public List<Transactions> findByType(TransactionsTypeDTO data, Long id) {
+    public List<Transactions> findByType(TransactionsFilterDTO data, Long id) {
         Type typeEnum;
 
         try {
-            typeEnum = Type.valueOf(data.type());
+            typeEnum = Type.valueOf(data.given());
         } catch (RuntimeException e) {
             throw new RuntimeException("Tipo inválido.");
         }
@@ -98,6 +97,22 @@ public class TransactionsService {
 
         return listOfUserTransaction.stream()
                 .filter(t -> t.getType().equals(typeEnum))
+                .toList();
+    }
+
+    public List<Transactions> findByName(TransactionsFilterDTO data, Long id) {
+        var listOfUserTransaction = repository.findAllOfIdUser(id);
+
+        return listOfUserTransaction.stream()
+                .filter(t -> t.getName().equals(data.given()))
+                .toList();
+    }
+
+    public List<Transactions> findByCategory(TransactionsFilterDTO data, Long id) {
+        var listOfUserTransaction = repository.findAllOfIdUser(id);
+
+        return listOfUserTransaction.stream()
+                .filter(t -> t.getCategory().getName().equals(data.given()))
                 .toList();
     }
 }
