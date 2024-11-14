@@ -63,4 +63,11 @@ public class TransactionController {
             @PathVariable Long id) {
         return ResponseEntity.ok(TransactionDetailsDTO.fromListEntityToListDTO(service.findByCategory(data, id)));
     }
+    @GetMapping(value = "/method/{id}", produces = MediaType.APPLICATION_JSON_VALUE,
+            consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<TransactionDetailsDTO>> findByMethod(
+            @RequestBody TransactionsFilterDTO data,
+            @PathVariable Long id) {
+        return ResponseEntity.ok(TransactionDetailsDTO.fromListEntityToListDTO(service.findByMethod(data, id)));
+    }
 }

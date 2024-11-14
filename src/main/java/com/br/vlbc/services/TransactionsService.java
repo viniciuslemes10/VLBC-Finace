@@ -1,5 +1,6 @@
 package com.br.vlbc.services;
 
+import com.br.vlbc.enums.Method;
 import com.br.vlbc.enums.Type;
 import com.br.vlbc.exceptions.BalanceInvalidException;
 import com.br.vlbc.model.Transactions;
@@ -113,6 +114,22 @@ public class TransactionsService {
 
         return listOfUserTransaction.stream()
                 .filter(t -> t.getCategory().getName().equals(data.given()))
+                .toList();
+    }
+
+    public List<Transactions> findByMethod(TransactionsFilterDTO data, Long id) {
+        Method method;
+
+        try {
+            method = Method.valueOf(data.given());
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Método inválido.");
+        }
+
+        var listOfUserTransaction = repository.findAllOfIdUser(id);
+
+        return listOfUserTransaction.stream()
+                .filter(t -> t.getMethod().equals(method))
                 .toList();
     }
 }
