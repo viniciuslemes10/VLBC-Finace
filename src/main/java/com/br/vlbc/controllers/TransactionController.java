@@ -3,6 +3,7 @@ package com.br.vlbc.controllers;
 import com.br.vlbc.records.transactions.TransactionDetailsDTO;
 import com.br.vlbc.records.transactions.TransactionsDTO;
 import com.br.vlbc.records.transactions.TransactionsFilterDTO;
+import com.br.vlbc.records.transactions.TransactionsFilterDatesDTO;
 import com.br.vlbc.services.TransactionsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -63,6 +64,7 @@ public class TransactionController {
             @PathVariable Long id) {
         return ResponseEntity.ok(TransactionDetailsDTO.fromListEntityToListDTO(service.findByCategory(data, id)));
     }
+
     @GetMapping(value = "/method/{id}", produces = MediaType.APPLICATION_JSON_VALUE,
             consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<TransactionDetailsDTO>> findByMethod(
@@ -70,4 +72,14 @@ public class TransactionController {
             @PathVariable Long id) {
         return ResponseEntity.ok(TransactionDetailsDTO.fromListEntityToListDTO(service.findByMethod(data, id)));
     }
+
+    @GetMapping(value = "/dates/{id}", produces = MediaType.APPLICATION_JSON_VALUE,
+            consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<TransactionDetailsDTO>> findByDates(
+            @RequestBody TransactionsFilterDatesDTO data,
+            @PathVariable Long id) {
+        return ResponseEntity.ok(TransactionDetailsDTO.fromListEntityToListDTO(service.findByDates(data, id)));
+    }
+
+
 }

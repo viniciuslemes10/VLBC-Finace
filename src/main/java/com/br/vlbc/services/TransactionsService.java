@@ -6,6 +6,7 @@ import com.br.vlbc.exceptions.BalanceInvalidException;
 import com.br.vlbc.model.Transactions;
 import com.br.vlbc.records.transactions.TransactionsDTO;
 import com.br.vlbc.records.transactions.TransactionsFilterDTO;
+import com.br.vlbc.records.transactions.TransactionsFilterDatesDTO;
 import com.br.vlbc.repositories.TransactionRepository;
 import com.br.vlbc.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalTime;
 import java.util.List;
 
 @Service
@@ -130,6 +132,22 @@ public class TransactionsService {
 
         return listOfUserTransaction.stream()
                 .filter(t -> t.getMethod().equals(method))
+                .toList();
+    }
+
+    public List<Transactions> findByDates(TransactionsFilterDatesDTO data, Long id) {
+        if(data.startDate() == null || data.endDate() == null) {
+            throw new RuntimeException("Os campos são obrigatórios.");
+        }
+
+        var listOfUserTransaction = repository.findAllOfIdUser(id);
+
+        var startDateTime = data.startDate().atStartOfDay();
+        var endDateTime = data.endDate().atTime(LocalTime.MAX);
+
+        return listOfUserTransaction.stream()
+                .filter(t -> !t.getDateOfCreation().isBefore(startDateTime)
+                        && !t.getUpdateDate().isAfter(endDateTime))
                 .toList();
     }
 }
