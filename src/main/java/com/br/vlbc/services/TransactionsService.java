@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -96,7 +97,7 @@ public class TransactionsService {
     }
 
     public List<Transactions> findAll(Long idUser) {
-        return repository.findAllOfIdUser(idUser);
+        return findUserTransactions(idUser);
     }
 
     public void delete(Long id) {
@@ -115,71 +116,51 @@ public class TransactionsService {
 
     public List<Transactions> findByType(TransactionsFilterDTO data, Long id) {
         Type typeEnum;
-
         try {
             typeEnum = Type.valueOf(data.given());
         } catch (RuntimeException e) {
             throw new RuntimeException("Tipo inválido.");
         }
 
-        var listOfUserTransaction = repository.findAllOfIdUser(id);
-
-        return listOfUserTransaction.stream()
-                .filter(t -> t.getType().equals(typeEnum))
-                .toList();
+        return findByFilter(data, id,
+                t -> t.getType().equals(typeEnum));
     }
 
     public List<Transactions> findByName(TransactionsFilterDTO data, Long id) {
-        var listOfUserTransaction = repository.findAllOfIdUser(id);
-
-        return listOfUserTransaction.stream()
-                .filter(t -> t.getName().equals(data.given()))
-                .toList();
+        return findByFilter(data, id,
+                t -> t.getName().equals(data.given()));
     }
 
     public List<Transactions> findByCategory(TransactionsFilterDTO data, Long id) {
-        var listOfUserTransaction = repository.findAllOfIdUser(id);
-
-        return listOfUserTransaction.stream()
-                .filter(t -> t.getCategory().getName().equals(data.given()))
-                .toList();
+        return findByFilter(data, id,
+                t -> t.getCategory().getName().equals(data.given()));
     }
 
     public List<Transactions> findByMethod(TransactionsFilterDTO data, Long id) {
         Method method;
-
         try {
             method = Method.valueOf(data.given());
         } catch (RuntimeException e) {
             throw new RuntimeException("Método inválido.");
         }
 
-        var listOfUserTransaction = repository.findAllOfIdUser(id);
-
-        return listOfUserTransaction.stream()
-                .filter(t -> t.getMethod().equals(method))
-                .toList();
+        return findByFilter(data, id,
+                t -> t.getMethod().equals(method));
     }
 
     public List<Transactions> findByDates(TransactionsFilterDatesDTO data, Long id) {
         if(data.startDate() == null || data.endDate() == null) {
             throw new RuntimeException("Os campos são obrigatórios.");
         }
-
-        var listOfUserTransaction = repository.findAllOfIdUser(id);
-
         var startDateTime = data.startDate().atStartOfDay();
         var endDateTime = data.endDate().atTime(LocalTime.MAX);
 
-        return listOfUserTransaction.stream()
-                .filter(t -> !t.getDateOfCreation().isBefore(startDateTime)
-                        && !t.getUpdateDate().isAfter(endDateTime))
-                .toList();
+        return findByFilter(data, id,
+                     t -> !t.getDateOfCreation().isBefore(startDateTime) &&
+                          !t.getUpdateDate().isAfter(endDateTime));
     }
 
     public List<Transactions> findByValues(TransactionsFilterValuesDTO data, Long id) {
-        var listOfUserTransaction = repository.findAllOfIdUser(id);
-
         if (data.minValue().compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException("O valor mínimo não pode ser negativo.");
         }
@@ -190,8 +171,20 @@ public class TransactionsService {
             throw new IllegalArgumentException("O valor máximo não pode ser menor que o valor mínimo.");
         }
 
+        return findByFilter(data, id,
+                            t -> t.getValue().compareTo(data.minValue()) >= 0 &&
+                                    t.getValue().compareTo(data.maxValue()) <= 0);
+    }
+
+    public <T extends Record> List<Transactions> findByFilter(
+            T data, Long id, Function<Transactions, Boolean> filter) {
+        var listOfUserTransaction = findUserTransactions(id);
         return listOfUserTransaction.stream()
-                .filter(t -> t.getValue().compareTo(data.minValue()) >= 0 && t.getValue().compareTo(data.maxValue()) <= 0)
+                .filter(filter::apply)
                 .collect(Collectors.toList());
+    }
+
+    private List<Transactions> findUserTransactions(Long id) {
+        return repository.findAllOfIdUser(id);
     }
 }
