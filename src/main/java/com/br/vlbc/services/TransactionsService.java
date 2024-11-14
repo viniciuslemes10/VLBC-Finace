@@ -7,6 +7,7 @@ import com.br.vlbc.model.Transactions;
 import com.br.vlbc.records.transactions.TransactionsDTO;
 import com.br.vlbc.records.transactions.TransactionsFilterDTO;
 import com.br.vlbc.records.transactions.TransactionsFilterDatesDTO;
+import com.br.vlbc.records.transactions.TransactionsFilterValuesDTO;
 import com.br.vlbc.repositories.TransactionRepository;
 import com.br.vlbc.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class TransactionsService {
@@ -149,5 +151,23 @@ public class TransactionsService {
                 .filter(t -> !t.getDateOfCreation().isBefore(startDateTime)
                         && !t.getUpdateDate().isAfter(endDateTime))
                 .toList();
+    }
+
+    public List<Transactions> findByValues(TransactionsFilterValuesDTO data, Long id) {
+        var listOfUserTransaction = repository.findAllOfIdUser(id);
+
+        if (data.minValue().compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("O valor mínimo não pode ser negativo.");
+        }
+        if (data.maxValue().compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("O valor máximo não pode ser negativo.");
+        }
+        if (data.maxValue().compareTo(data.minValue()) < 0) {
+            throw new IllegalArgumentException("O valor máximo não pode ser menor que o valor mínimo.");
+        }
+
+        return listOfUserTransaction.stream()
+                .filter(t -> t.getValue().compareTo(data.minValue()) >= 0 && t.getValue().compareTo(data.maxValue()) <= 0)
+                .collect(Collectors.toList());
     }
 }

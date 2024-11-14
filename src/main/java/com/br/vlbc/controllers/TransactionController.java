@@ -1,9 +1,6 @@
 package com.br.vlbc.controllers;
 
-import com.br.vlbc.records.transactions.TransactionDetailsDTO;
-import com.br.vlbc.records.transactions.TransactionsDTO;
-import com.br.vlbc.records.transactions.TransactionsFilterDTO;
-import com.br.vlbc.records.transactions.TransactionsFilterDatesDTO;
+import com.br.vlbc.records.transactions.*;
 import com.br.vlbc.services.TransactionsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -79,6 +76,14 @@ public class TransactionController {
             @RequestBody TransactionsFilterDatesDTO data,
             @PathVariable Long id) {
         return ResponseEntity.ok(TransactionDetailsDTO.fromListEntityToListDTO(service.findByDates(data, id)));
+    }
+
+    @GetMapping(value = "/values/{id}", produces = MediaType.APPLICATION_JSON_VALUE,
+            consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<TransactionDetailsDTO>> findByValues(
+            @RequestBody TransactionsFilterValuesDTO data,
+            @PathVariable Long id) {
+        return ResponseEntity.ok(TransactionDetailsDTO.fromListEntityToListDTO(service.findByValues(data, id)));
     }
 
 
