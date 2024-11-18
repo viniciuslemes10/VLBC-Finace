@@ -10,7 +10,6 @@ public record UserDetailsDTO(
         String userName,
         String fullName,
         String email,
-        String password,
         BigDecimal balance,
         boolean accountNonExpired,
         boolean accountNonLocked,
@@ -19,7 +18,7 @@ public record UserDetailsDTO(
 ) {
     public UserDetailsDTO(User user) {
         this(user.getId(), user.getUserName(), user.getFullName(),
-                user.getEmail(), user.getPassword(), user.getBalance(),
+                user.getEmail(), user.getBalance(),
                 user.isAccountNonExpired(), user.isAccountNonLocked(),
                 user.isCredentialsNonExpired(), user.isEnable());
     }

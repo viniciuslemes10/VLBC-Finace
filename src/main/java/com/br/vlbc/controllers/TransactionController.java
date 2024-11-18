@@ -8,6 +8,10 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @RestController
@@ -86,5 +90,25 @@ public class TransactionController {
         return ResponseEntity.ok(TransactionDetailsDTO.fromListEntityToListDTO(service.findByValues(data, id)));
     }
 
+    @GetMapping(value = "/categories/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<CategoryStatisticsDTO>> calculatePercentageForAllCategories(
+            @PathVariable("id") Long id) {
+        return ResponseEntity.ok(service.getCategoryPercentages(id));
+    }
+
+    @GetMapping(value = "/overview/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<TransactionDetailsDTO>> getTransactionsForMonth(
+            @PathVariable("id") Long id,
+            @RequestParam String month) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate startOfMonth = LocalDate.parse(month + "-01", formatter);
+        LocalDate endOfMonth = startOfMonth.plusMonths(1).minusDays(1);
+
+        LocalDateTime startDateTime = startOfMonth.atStartOfDay(); // Início do dia
+        LocalDateTime endDateTime = endOfMonth.atTime(LocalTime.MAX);
+
+        var listTransactions = service.getTransactionsForUserInDateRange(id, startDateTime, endDateTime);
+        return ResponseEntity.ok(TransactionDetailsDTO.fromListEntityToListDTO(listTransactions));
+    }
 
 }

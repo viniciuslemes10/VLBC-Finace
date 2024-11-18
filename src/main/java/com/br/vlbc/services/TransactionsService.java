@@ -6,17 +6,18 @@ import com.br.vlbc.exceptions.TransactionNotFoundException;
 import com.br.vlbc.model.Category;
 import com.br.vlbc.model.Transactions;
 import com.br.vlbc.model.User;
-import com.br.vlbc.records.transactions.TransactionsDTO;
-import com.br.vlbc.records.transactions.TransactionsFilterDTO;
-import com.br.vlbc.records.transactions.TransactionsFilterDatesDTO;
-import com.br.vlbc.records.transactions.TransactionsFilterValuesDTO;
+import com.br.vlbc.records.transactions.*;
 import com.br.vlbc.repositories.TransactionRepository;
 import com.br.vlbc.utils.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -127,5 +128,41 @@ public class TransactionsService {
 
     private List<Transactions> findUserTransactions(Long id) {
         return repository.findAllOfIdUser(id);
+    }
+
+    public List<CategoryStatisticsDTO> getCategoryPercentages(Long id) {
+        var transactions = findUserTransactions(id);
+
+        BigDecimal totalValue = transactions.stream()
+                .map(Transactions::getValue)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        if(totalValue.compareTo(BigDecimal.ZERO) == 0) {
+            throw new IllegalStateException("Nenhuma transação encontrada ou total geral é zero.");
+        }
+
+        Map<String, BigDecimal> totalsByCategory = transactions.stream()
+                .collect(Collectors.groupingBy(
+                        transaction -> transaction.getCategory().getName(),
+                        Collectors.mapping(
+                                Transactions::getValue,
+                                Collectors.reducing(BigDecimal.ZERO, BigDecimal::add)
+                        )
+                ));
+
+        return totalsByCategory.entrySet().stream()
+                .map(entry -> {
+                    String categoryName = entry.getKey();
+                    BigDecimal totalSpent = entry.getValue();
+                    BigDecimal percentage = totalSpent
+                            .divide(totalValue, 4, RoundingMode.HALF_UP)
+                            .multiply(BigDecimal.valueOf(100));
+                    return new CategoryStatisticsDTO(categoryName, totalSpent, percentage);
+                })
+                .collect(Collectors.toList());
+    }
+
+    public List<Transactions> getTransactionsForUserInDateRange(Long id, LocalDateTime startOfMonth, LocalDateTime endOfMonth) {
+        return repository.findByUserIdAndDateBetween(id, startOfMonth, endOfMonth);
     }
 }
